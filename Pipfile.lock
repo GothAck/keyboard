@@ -1,0 +1,37 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "79940a9c58d38a88ceb3584e80cf05b4fd90e223658976790979a851554e70fe"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.8"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "openpyscad": {
+            "hashes": [
+                "sha256:69583131a1b9a948b2ebcfa9c7ec1800053dd4bf27f5f9e9cbe2b4b08ec5d325",
+                "sha256:f4002358862c0596add94dd8f1fce754f856bd9da900a5037539d006e0299068"
+            ],
+            "index": "pypi",
+            "version": "==0.4.0"
+        },
+        "six": {
+            "hashes": [
+                "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259",
+                "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"
+            ],
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "version": "==1.15.0"
+        }
+    },
+    "develop": {}
+}
