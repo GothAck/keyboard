@@ -91,11 +91,11 @@ def key_plate_cutout(lines, depth=1):
         doc.append(k.translate([SPACING * x, SPACING * y, 0]))
     return doc
 
-def upper_cutout(lines):
+def upper_cutout(lines, depth=1):
     doc = openpyscad.Translate([0, 0, 0])
     y = 0
     for x, y, width, height in generate_keys(lines, generate_2=True):
-        k = openpyscad.Cube([SPACING * width, SPACING * height, 1], center=True)
+        k = openpyscad.Cube([SPACING * width, SPACING * height, depth], center=True)
         doc.append(k.translate([SPACING * x, SPACING * y, 0]))
     return doc
 
