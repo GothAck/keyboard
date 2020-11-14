@@ -84,7 +84,7 @@ def main(layout_json):
     lines = layout[1:]
     print(f"Generating keyboard {data}")
 
-    doc = openpyscad.Union()
+    doc = openpyscad.Translate([0, 0, 0])
 
     doc.append(key_plate_cutout(lines))
 
