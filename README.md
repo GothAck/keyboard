@@ -10,6 +10,5 @@ There's at least one project already doing this, but it's unmaintained and I wan
 They're coming, for now I'm just generating the layout, the rest will come. Looking for input and improvement suggestions too!
 
 ## To-do
-* Generate stabilizers
 * Generate a keyboard plate
 * Generate a case
