@@ -1,4 +1,4 @@
-from openpyscad import Cube, Difference, Translate, Union
+from openpyscad import Cube, Cylinder, Difference, Translate, Union
 import json
 import sys
 
@@ -98,6 +98,20 @@ def size(lines):
     return max_x + 1, max_y + 1
 
 
+def key_plate_clip_cutout(lines, depth=1):
+    doc = Translate([0, 0, 0])
+    for x, y, width, height in generate_keys(lines):
+        doc.append([
+            Cylinder(d=5, h=depth, center=True)
+                .translate([SPACING * x, SPACING * y, 0])
+                .translate([0, 6, 0]),
+            Cylinder(d=5, h=depth, center=True)
+                .translate([SPACING * x, SPACING * y, 0])
+                .translate([0, -6, 0]),
+        ])
+    return doc
+
+
 def key_plate_cutout(lines, depth=1):
     doc = Translate([0, 0, 0])
     for x, y, width, height in generate_keys(lines):
@@ -123,12 +137,18 @@ def key_plate(lines, padding=5):
     h += padding * 2
     doc = Difference()
     doc.append(
-        Cube([w, h, 1.5], center=True)
-        .translate([-SPACING / 2, -SPACING / 2, 0])
-        .translate([-padding, -padding, 0])
-        .translate([w / 2, h / 2, 0])
+        Cube([w, h, 4.5], center=True)
+            .translate([-SPACING / 2, -SPACING / 2, 0])
+            .translate([-padding, -padding, 0])
+            .translate([w / 2, h / 2, 0])
     )
-    doc.append(key_plate_cutout(lines, depth=1.6))
+    doc.append(
+        key_plate_cutout(lines, depth=4.5)
+    )
+    doc.append(
+        key_plate_clip_cutout(lines, depth=4.5)
+            .translate([0, 0, 1.5])
+    )
     return doc
 
 
@@ -160,7 +180,7 @@ def main(layout_json):
     print(f"Size {size(lines)}")
 
     doc = Translate([0, 0, 0])
-    doc.append(key_plate_cutout(lines))
+    doc.append(key_plate_clip_cutout(lines))
     doc.write("key_plate_cutout.scad")
 
     doc = Translate([0, 0, 0])
