@@ -116,12 +116,12 @@ def key_plate(lines, padding=5):
     h += padding * 2
     doc = openpyscad.Difference()
     doc.append(
-        openpyscad.Cube([w, h, 0.9], center=True)
+        openpyscad.Cube([w, h, 1.5], center=True)
         .translate([-SPACING / 2, -SPACING / 2, 0])
         .translate([-padding, -padding, 0])
         .translate([w / 2, h / 2, 0])
     )
-    doc.append(key_plate_cutout(lines))
+    doc.append(key_plate_cutout(lines, depth=1.51))
     return doc
 
 def main(layout_json):
