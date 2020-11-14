@@ -36,7 +36,7 @@ def plane_key(width, height, depth):
         k.append(stabilizer(100, depth))
     return k
 
-def generate_keys(lines):
+def generate_keys(lines, generate_2=False):
     y = 0
     for line in lines:
         x = 0
@@ -57,7 +57,9 @@ def generate_keys(lines):
                 if 'h' in keydef:
                     height = keydef['h']
                     next_y += (height - 1) * 0.5
-                # FIXME: x2, w2, h2
+                if generate_2 and any(key.endswith("2") for key in keydef.keys()):
+                    # FIXME: x2, w2, h2
+                    pass
                 continue
             yield (x, y + next_y, width, height)
             x += 1
@@ -80,7 +82,7 @@ def key_plate_cutout(lines, depth=1):
 def upper_cutout(lines):
     doc = openpyscad.Translate([0, 0, 0])
     y = 0
-    for x, y, width, height in generate_keys(lines):
+    for x, y, width, height in generate_keys(lines, generate_2=True):
         k = openpyscad.Cube([SPACING * width, SPACING * height, 1], center=True)
         doc.append(k.translate([SPACING * x, SPACING * y, 0]))
     return doc
