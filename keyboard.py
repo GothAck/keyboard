@@ -84,6 +84,15 @@ def generate_keys(lines, generate_2=False):
             height = 1
         y += 1
 
+def size(lines):
+    max_x = 0
+    max_y = 0
+    for x, y, width, height in generate_keys(lines):
+        max_x = max(max_x, x)
+        max_y = max(max_y, y)
+
+    return max_x + 1, max_y + 1
+
 def key_plate_cutout(lines, depth=1):
     doc = openpyscad.Translate([0, 0, 0])
     for x, y, width, height in generate_keys(lines):
@@ -99,6 +108,22 @@ def upper_cutout(lines, depth=1):
         doc.append(k.translate([SPACING * x, SPACING * y, 0]))
     return doc
 
+def key_plate(lines, padding=5):
+    w, h = size(lines)
+    w *= SPACING
+    h *= SPACING
+    w += padding * 2
+    h += padding * 2
+    doc = openpyscad.Difference()
+    doc.append(
+        openpyscad.Cube([w, h, 0.9], center=True)
+        .translate([-SPACING / 2, -SPACING / 2, 0])
+        .translate([-padding, -padding, 0])
+        .translate([w / 2, h / 2, 0])
+    )
+    doc.append(key_plate_cutout(lines))
+    return doc
+
 def main(layout_json):
     with open(layout_json) as fh:
         layout = json.load(fh)
@@ -108,9 +133,15 @@ def main(layout_json):
     lines = layout[1:]
     print(f"Generating keyboard {data}")
 
+    print(f"Size {size(lines)}")
+
     doc = openpyscad.Translate([0, 0, 0])
     doc.append(key_plate_cutout(lines))
     doc.write("key_plate_cutout.scad")
+
+    doc = openpyscad.Translate([0, 0, 0])
+    doc.append(key_plate(lines))
+    doc.write("key_plate.scad")
 
     doc = openpyscad.Translate([0, 0, 0])
     doc.append(upper_cutout(lines))
