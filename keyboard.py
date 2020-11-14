@@ -70,10 +70,10 @@ def generate_keys(lines, generate_2=False):
                         w2 = keydef["w2"]
                     if "h2" in keydef:
                         h2 = keydef["h2"]
-                    yield (x2, y2, w2, h2)
+                    yield (x2, y2, w2, h2, None)
                     pass
                 continue
-            yield (x, y + next_y, width, height)
+            yield (x, y + next_y, width, height, keydef.replace("\n", " ") if keydef else keydef)
             x += 1
             if next_x:
                 x += next_x
@@ -86,16 +86,16 @@ def generate_keys(lines, generate_2=False):
 
 def key_plate_cutout(lines, depth=1):
     doc = openpyscad.Translate([0, 0, 0])
-    for x, y, width, height in generate_keys(lines):
-        k = plane_key(width, height, depth)
+    for x, y, width, height, comment in generate_keys(lines):
+        k = plane_key(width, height, depth).comment(comment)
         doc.append(k.translate([SPACING * x, SPACING * y, 0]))
     return doc
 
 def upper_cutout(lines):
     doc = openpyscad.Translate([0, 0, 0])
     y = 0
-    for x, y, width, height in generate_keys(lines, generate_2=True):
-        k = openpyscad.Cube([SPACING * width, SPACING * height, 1], center=True)
+    for x, y, width, height, comment in generate_keys(lines, generate_2=True):
+        k = openpyscad.Cube([SPACING * width, SPACING * height, 1], center=True).comment(comment)
         doc.append(k.translate([SPACING * x, SPACING * y, 0]))
     return doc
 
