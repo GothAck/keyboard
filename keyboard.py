@@ -85,10 +85,8 @@ def main(layout_json):
     print(f"Generating keyboard {data}")
 
     doc = openpyscad.Translate([0, 0, 0])
-
     doc.append(key_plate_cutout(lines))
-
-    doc.write("keyboard.scad")
+    doc.write("key_plate_cutout.scad")
 
 if __name__ == "__main__":
     layout_json = "layout.json" if len(sys.argv) < 2 else sys.argv[1]
