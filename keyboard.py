@@ -5,38 +5,38 @@ import sys
 SPACING = 18.5
 SIZE = 14
 
-def stabilizer(width):
+def stabilizer(width, depth):
     stab = openpyscad.Union()
-    stab.append(openpyscad.Cube([width, 4.6, 1], center=True))
+    stab.append(openpyscad.Cube([width, 4.6, depth], center=True))
     lhs = openpyscad.Translate([-width / 2, 0.62, 0])
     lhs.append([
-        openpyscad.Cube([6.75, 12.3, 1], center=True).translate([0, 0, 0]),
-        openpyscad.Cube([3.3, 1.2, 1], center=True).translate([0, 6.75, 0]),
-        openpyscad.Cube([0.82, 2.8, 1], center=True).translate([-3.79, -1.52, 0]),
+        openpyscad.Cube([6.75, 12.3, depth], center=True).translate([0, 0, 0]),
+        openpyscad.Cube([3.3, 1.2, depth], center=True).translate([0, 6.75, 0]),
+        openpyscad.Cube([0.82, 2.8, depth], center=True).translate([-3.79, -1.52, 0]),
     ])
     stab.append(lhs)
     rhs = openpyscad.Translate([width / 2, 0.62, 0])
     rhs.append([
-        openpyscad.Cube([6.75, 12.3, 1], center=True).translate([0, 0, 0]),
-        openpyscad.Cube([3.3, 1.2, 1], center=True).translate([0, 6.75, 0]),
-        openpyscad.Cube([0.82, 2.8, 1], center=True).translate([3.79, -1.52, 0]),
+        openpyscad.Cube([6.75, 12.3, depth], center=True).translate([0, 0, 0]),
+        openpyscad.Cube([3.3, 1.2, depth], center=True).translate([0, 6.75, 0]),
+        openpyscad.Cube([0.82, 2.8, depth], center=True).translate([3.79, -1.52, 0]),
     ])
     stab.append(rhs)
     return stab
 
-def plane_key(width, height):
+def plane_key(width, height, depth):
     k = openpyscad.Union()
     cube = openpyscad.Cube([SIZE, SIZE, 1], center=True)
     k.append(cube)
     if width == 2:
-        k.append(stabilizer(23.12))
+        k.append(stabilizer(23.12, depth))
     elif height == 2:
-        k.append(stabilizer(23.12).rotate([0, 0, 90]))
+        k.append(stabilizer(23.12, depth).rotate([0, 0, 90]))
     elif width == 6.25:
-        k.append(stabilizer(100))
+        k.append(stabilizer(100, depth))
     return k
 
-def key_plate_cutout(lines):
+def key_plate_cutout(lines, depth=1):
     doc = openpyscad.Translate([0, 0, 0])
     y = 0
     for line in lines:
@@ -59,7 +59,7 @@ def key_plate_cutout(lines):
                     height = keydef['h']
                     next_y += (height - 1) * 0.5
                 continue
-            k = plane_key(width, height)
+            k = plane_key(width, height, depth)
             doc.append(k.translate([SPACING * x, SPACING * (y + next_y), 0]))
             x += 1
             if next_x:
