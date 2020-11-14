@@ -12,14 +12,14 @@ def stabilizer(width, depth):
     lhs.append([
         openpyscad.Cube([6.75, 12.3, depth], center=True).translate([0, 0, 0]),
         openpyscad.Cube([3.3, 1.2, depth], center=True).translate([0, 6.75, 0]),
-        openpyscad.Cube([0.82, 2.8, depth], center=True).translate([-3.79, -1.52, 0]),
+        openpyscad.Cube([0.82 + 0.01, 2.8, depth], center=True).translate([-3.79, -1.52, 0]),
     ])
     stab.append(lhs)
     rhs = openpyscad.Translate([width / 2, 0.62, 0])
     rhs.append([
         openpyscad.Cube([6.75, 12.3, depth], center=True).translate([0, 0, 0]),
         openpyscad.Cube([3.3, 1.2, depth], center=True).translate([0, 6.75, 0]),
-        openpyscad.Cube([0.82, 2.8, depth], center=True).translate([3.79, -1.52, 0]),
+        openpyscad.Cube([0.82 + 0.01, 2.8, depth], center=True).translate([3.79, -1.52, 0]),
     ])
     stab.append(rhs)
     return stab
