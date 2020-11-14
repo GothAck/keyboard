@@ -36,14 +36,10 @@ def plane_key(width, height):
         k.append(stabilizer(100))
     return k
 
-def main(layout_json):
-    with open(layout_json) as fh:
-        layout = json.load(fh)
-
-    doc = openpyscad.Union()
-
+def key_plate_cutout(lines):
+    doc = openpyscad.Translate([0, 0, 0])
     y = 0
-    for line in layout[1:]:
+    for line in lines:
         x = 0
         next_x = 0
         next_y = 0
@@ -74,6 +70,23 @@ def main(layout_json):
             width = 1
             height = 1
         y += 1
+    return doc
+
+def key_plane(lines):
+    pass
+
+def main(layout_json):
+    with open(layout_json) as fh:
+        layout = json.load(fh)
+
+
+    data = layout[0]
+    lines = layout[1:]
+    print(f"Generating keyboard {data}")
+
+    doc = openpyscad.Union()
+
+    doc.append(key_plate_cutout(lines))
 
     doc.write("keyboard.scad")
 
