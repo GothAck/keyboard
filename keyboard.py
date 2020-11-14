@@ -121,7 +121,23 @@ def key_plate(lines, padding=5):
         .translate([-padding, -padding, 0])
         .translate([w / 2, h / 2, 0])
     )
-    doc.append(key_plate_cutout(lines, depth=1.51))
+    doc.append(key_plate_cutout(lines, depth=1.6))
+    return doc
+
+def upper_plate(lines, padding=5):
+    w, h = size(lines)
+    w *= SPACING
+    h *= SPACING
+    w += padding * 2
+    h += padding * 2
+    doc = openpyscad.Difference()
+    doc.append(
+        openpyscad.Cube([w, h, 1.5], center=True)
+        .translate([-SPACING / 2, -SPACING / 2, 0])
+        .translate([-padding, -padding, 0])
+        .translate([w / 2, h / 2, 0])
+    )
+    doc.append(upper_cutout(lines, depth=1.6))
     return doc
 
 def main(layout_json):
@@ -146,6 +162,10 @@ def main(layout_json):
     doc = openpyscad.Translate([0, 0, 0])
     doc.append(upper_cutout(lines))
     doc.write("upper_cutout.scad")
+
+    doc = openpyscad.Translate([0, 0, 0])
+    doc.append(upper_plate(lines))
+    doc.write("upper_plate.scad")
 
 if __name__ == "__main__":
     layout_json = "layout.json" if len(sys.argv) < 2 else sys.argv[1]
