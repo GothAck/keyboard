@@ -24,6 +24,18 @@ def stabilizer(width):
     stab.append(rhs)
     return stab
 
+def key(width, height):
+    k = openpyscad.Union()
+    cube = openpyscad.Cube([SIZE, SIZE, 1], center=True)
+    k.append(cube)
+    if width == 2:
+        k.append(stabilizer(23.12))
+    elif height == 2:
+        k.append(stabilizer(23.12).rotate([0, 0, 90]))
+    elif width == 6.25:
+        k.append(stabilizer(100))
+    return k
+
 def main(layout_json):
     with open(layout_json) as fh:
         layout = json.load(fh)
@@ -37,30 +49,22 @@ def main(layout_json):
         next_y = 0
         width = 1
         height = 1
-        for key in line:
-            if isinstance(key, dict):
-                if 'x' in key:
-                    x += key['x']
-                if 'w' in key:
-                    width = key['w']
+        for keydef in line:
+            if isinstance(keydef, dict):
+                if 'x' in keydef:
+                    x += keydef['x']
+                if 'w' in keydef:
+                    width = keydef['w']
                     x += (width - 1) * 0.5
                     next_x = (width - 1) * 0.5
-                if 'y' in key:
-                    y += key['y']
-                if 'h' in key:
-                    height = key['h']
+                if 'y' in keydef:
+                    y += keydef['y']
+                if 'h' in keydef:
+                    height = keydef['h']
                     next_y += (height - 1) * 0.5
                 continue
-            key = openpyscad.Translate([SPACING * x, SPACING * (y + next_y), 0])
-            cube = openpyscad.Cube([SIZE, SIZE, 1], center=True)
-            key.append(cube)
-            if width == 2:
-                key.append(stabilizer(23.12))
-            if height == 2:
-                key.append(stabilizer(23.12).rotate([0, 0, 90]))
-            if width == 6.25:
-                key.append(stabilizer(100))
-            doc.append(key)
+            k = key(width, height)
+            doc.append(k.translate([SPACING * x, SPACING * (y + next_y), 0]))
             x += 1
             if next_x:
                 x += next_x
