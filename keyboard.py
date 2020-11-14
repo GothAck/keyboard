@@ -24,7 +24,7 @@ def stabilizer(width):
     stab.append(rhs)
     return stab
 
-def key(width, height):
+def plane_key(width, height):
     k = openpyscad.Union()
     cube = openpyscad.Cube([SIZE, SIZE, 1], center=True)
     k.append(cube)
@@ -63,7 +63,7 @@ def main(layout_json):
                     height = keydef['h']
                     next_y += (height - 1) * 0.5
                 continue
-            k = key(width, height)
+            k = plane_key(width, height)
             doc.append(k.translate([SPACING * x, SPACING * (y + next_y), 0]))
             x += 1
             if next_x:
