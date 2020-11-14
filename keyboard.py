@@ -26,7 +26,7 @@ def stabilizer(width, depth):
 
 def plane_key(width, height, depth):
     k = openpyscad.Union()
-    cube = openpyscad.Cube([SIZE, SIZE, 1], center=True)
+    cube = openpyscad.Cube([SIZE, SIZE, depth], center=True)
     k.append(cube)
     if width == 2:
         k.append(stabilizer(23.12, depth))
