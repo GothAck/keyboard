@@ -36,8 +36,7 @@ def plane_key(width, height, depth):
         k.append(stabilizer(100, depth))
     return k
 
-def key_plate_cutout(lines, depth=1):
-    doc = openpyscad.Translate([0, 0, 0])
+def generate_keys(lines):
     y = 0
     for line in lines:
         x = 0
@@ -58,9 +57,9 @@ def key_plate_cutout(lines, depth=1):
                 if 'h' in keydef:
                     height = keydef['h']
                     next_y += (height - 1) * 0.5
+                # FIXME: x2, w2, h2
                 continue
-            k = plane_key(width, height, depth)
-            doc.append(k.translate([SPACING * x, SPACING * (y + next_y), 0]))
+            yield (x, y + next_y, width, height)
             x += 1
             if next_x:
                 x += next_x
@@ -70,43 +69,20 @@ def key_plate_cutout(lines, depth=1):
             width = 1
             height = 1
         y += 1
+
+def key_plate_cutout(lines, depth=1):
+    doc = openpyscad.Translate([0, 0, 0])
+    for x, y, width, height in generate_keys(lines):
+        k = plane_key(width, height, depth)
+        doc.append(k.translate([SPACING * x, SPACING * y, 0]))
     return doc
 
 def upper_cutout(lines):
     doc = openpyscad.Translate([0, 0, 0])
     y = 0
-    for line in lines:
-        x = 0
-        next_x = 0
-        next_y = 0
-        width = 1
-        height = 1
-        for keydef in line:
-            if isinstance(keydef, dict):
-                if 'x' in keydef:
-                    x += keydef['x']
-                if 'w' in keydef:
-                    width = keydef['w']
-                    x += (width - 1) * 0.5
-                    next_x = (width - 1) * 0.5
-                if 'y' in keydef:
-                    y += keydef['y']
-                if 'h' in keydef:
-                    height = keydef['h']
-                    next_y += (height - 1) * 0.5
-                # FIXME: create cube for w2 h2 x2
-                continue
-            k = openpyscad.Cube([SPACING * width, SPACING * height, 1], center=True)
-            doc.append(k.translate([SPACING * x, SPACING * (y + next_y), 0]))
-            x += 1
-            if next_x:
-                x += next_x
-                next_x = 0
-            if next_y:
-                next_y = 0
-            width = 1
-            height = 1
-        y += 1
+    for x, y, width, height in generate_keys(lines):
+        k = openpyscad.Cube([SPACING * width, SPACING * height, 1], center=True)
+        doc.append(k.translate([SPACING * x, SPACING * y, 0]))
     return doc
 
 def main(layout_json):
