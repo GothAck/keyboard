@@ -72,8 +72,42 @@ def key_plate_cutout(lines):
         y += 1
     return doc
 
-def key_plane(lines):
-    pass
+def upper_cutout(lines):
+    doc = openpyscad.Translate([0, 0, 0])
+    y = 0
+    for line in lines:
+        x = 0
+        next_x = 0
+        next_y = 0
+        width = 1
+        height = 1
+        for keydef in line:
+            if isinstance(keydef, dict):
+                if 'x' in keydef:
+                    x += keydef['x']
+                if 'w' in keydef:
+                    width = keydef['w']
+                    x += (width - 1) * 0.5
+                    next_x = (width - 1) * 0.5
+                if 'y' in keydef:
+                    y += keydef['y']
+                if 'h' in keydef:
+                    height = keydef['h']
+                    next_y += (height - 1) * 0.5
+                # FIXME: create cube for w2 h2 x2
+                continue
+            k = openpyscad.Cube([SPACING * width, SPACING * height, 1], center=True)
+            doc.append(k.translate([SPACING * x, SPACING * (y + next_y), 0]))
+            x += 1
+            if next_x:
+                x += next_x
+                next_x = 0
+            if next_y:
+                next_y = 0
+            width = 1
+            height = 1
+        y += 1
+    return doc
 
 def main(layout_json):
     with open(layout_json) as fh:
@@ -87,6 +121,10 @@ def main(layout_json):
     doc = openpyscad.Translate([0, 0, 0])
     doc.append(key_plate_cutout(lines))
     doc.write("key_plate_cutout.scad")
+
+    doc = openpyscad.Translate([0, 0, 0])
+    doc.append(upper_cutout(lines))
+    doc.write("upper_cutout.scad")
 
 if __name__ == "__main__":
     layout_json = "layout.json" if len(sys.argv) < 2 else sys.argv[1]
