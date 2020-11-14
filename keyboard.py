@@ -74,7 +74,6 @@ def generate_keys(lines, generate_2=False):
                     if "h2" in keydef:
                         h2 = keydef["h2"]
                     yield (x2, y2, w2, h2)
-                    pass
                 continue
             yield (x, y + next_y, width, height)
             x += 1
