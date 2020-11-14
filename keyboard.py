@@ -58,7 +58,19 @@ def generate_keys(lines, generate_2=False):
                     height = keydef['h']
                     next_y += (height - 1) * 0.5
                 if generate_2 and any(key.endswith("2") for key in keydef.keys()):
-                    # FIXME: x2, w2, h2
+                    x2 = x
+                    y2 = y
+                    w2 = 1
+                    h2 = 1
+                    if "x2" in keydef:
+                        x2 += keydef["x2"]
+                    if "y2" in keydef:
+                        y2 += keydef["y2"]
+                    if "w2" in keydef:
+                        w2 = keydef["w2"]
+                    if "h2" in keydef:
+                        h2 = keydef["h2"]
+                    yield (x2, y2, w2, h2)
                     pass
                 continue
             yield (x, y + next_y, width, height)

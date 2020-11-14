@@ -177,6 +177,9 @@ translate(v=[0, 0, 0]){
         translate(v=[272.875, 46.25, 0]){
             cube(size=[18.5, 18.5, 1], center=true);
         };
+        translate(v=[293.6875, 46.25, 0]){
+            cube(size=[27.75, 18.5, 1], center=true);
+        };
         translate(v=[298.3125, 55.5, 0]){
             cube(size=[23.125, 37.0, 1], center=true);
         };
