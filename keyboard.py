@@ -1,32 +1,34 @@
-import openpyscad
+from openpyscad import Cube, Difference, Translate, Union
 import json
 import sys
 
 SPACING = 18.5
 SIZE = 14
 
+
 def stabilizer(width, depth):
-    stab = openpyscad.Union()
-    stab.append(openpyscad.Cube([width, 4.6, depth], center=True))
-    lhs = openpyscad.Translate([-width / 2, 0.62, 0])
+    stab = Union()
+    stab.append(Cube([width, 4.6, depth], center=True))
+    lhs = Translate([-width / 2, 0.62, 0])
     lhs.append([
-        openpyscad.Cube([6.75, 12.3, depth], center=True).translate([0, 0, 0]),
-        openpyscad.Cube([3.3, 1.2, depth], center=True).translate([0, 6.75, 0]),
-        openpyscad.Cube([0.82 + 0.01, 2.8, depth], center=True).translate([-3.79, -1.52, 0]),
+        Cube([6.75, 12.3, depth], center=True).translate([0, 0, 0]),
+        Cube([3.3, 1.2, depth], center=True).translate([0, 6.75, 0]),
+        Cube([0.82 + 0.01, 2.8, depth], center=True).translate([-3.79, -1.52, 0]),
     ])
     stab.append(lhs)
-    rhs = openpyscad.Translate([width / 2, 0.62, 0])
+    rhs = Translate([width / 2, 0.62, 0])
     rhs.append([
-        openpyscad.Cube([6.75, 12.3, depth], center=True).translate([0, 0, 0]),
-        openpyscad.Cube([3.3, 1.2, depth], center=True).translate([0, 6.75, 0]),
-        openpyscad.Cube([0.82 + 0.01, 2.8, depth], center=True).translate([3.79, -1.52, 0]),
+        Cube([6.75, 12.3, depth], center=True).translate([0, 0, 0]),
+        Cube([3.3, 1.2, depth], center=True).translate([0, 6.75, 0]),
+        Cube([0.82 + 0.01, 2.8, depth], center=True).translate([3.79, -1.52, 0]),
     ])
     stab.append(rhs)
     return stab
 
+
 def plane_key(width, height, depth):
-    k = openpyscad.Union()
-    cube = openpyscad.Cube([SIZE, SIZE, depth], center=True)
+    k = Union()
+    cube = Cube([SIZE, SIZE, depth], center=True)
     k.append(cube)
     if width == 2:
         k.append(stabilizer(23.12, depth))
@@ -35,6 +37,7 @@ def plane_key(width, height, depth):
     elif width == 6.25:
         k.append(stabilizer(100, depth))
     return k
+
 
 def generate_keys(lines, generate_2=False):
     y = 0
@@ -84,6 +87,7 @@ def generate_keys(lines, generate_2=False):
             height = 1
         y += 1
 
+
 def size(lines):
     max_x = 0
     max_y = 0
@@ -93,20 +97,23 @@ def size(lines):
 
     return max_x + 1, max_y + 1
 
+
 def key_plate_cutout(lines, depth=1):
-    doc = openpyscad.Translate([0, 0, 0])
+    doc = Translate([0, 0, 0])
     for x, y, width, height in generate_keys(lines):
         k = plane_key(width, height, depth)
         doc.append(k.translate([SPACING * x, SPACING * y, 0]))
     return doc
 
+
 def upper_cutout(lines, depth=1):
-    doc = openpyscad.Translate([0, 0, 0])
+    doc = Translate([0, 0, 0])
     y = 0
     for x, y, width, height in generate_keys(lines, generate_2=True):
-        k = openpyscad.Cube([SPACING * width, SPACING * height, depth], center=True)
+        k = Cube([SPACING * width, SPACING * height, depth], center=True)
         doc.append(k.translate([SPACING * x, SPACING * y, 0]))
     return doc
+
 
 def key_plate(lines, padding=5):
     w, h = size(lines)
@@ -114,9 +121,9 @@ def key_plate(lines, padding=5):
     h *= SPACING
     w += padding * 2
     h += padding * 2
-    doc = openpyscad.Difference()
+    doc = Difference()
     doc.append(
-        openpyscad.Cube([w, h, 1.5], center=True)
+        Cube([w, h, 1.5], center=True)
         .translate([-SPACING / 2, -SPACING / 2, 0])
         .translate([-padding, -padding, 0])
         .translate([w / 2, h / 2, 0])
@@ -124,15 +131,16 @@ def key_plate(lines, padding=5):
     doc.append(key_plate_cutout(lines, depth=1.6))
     return doc
 
+
 def upper_plate(lines, padding=5):
     w, h = size(lines)
     w *= SPACING
     h *= SPACING
     w += padding * 2
     h += padding * 2
-    doc = openpyscad.Difference()
+    doc = Difference()
     doc.append(
-        openpyscad.Cube([w, h, 1.5], center=True)
+        Cube([w, h, 1.5], center=True)
         .translate([-SPACING / 2, -SPACING / 2, 0])
         .translate([-padding, -padding, 0])
         .translate([w / 2, h / 2, 0])
@@ -140,10 +148,10 @@ def upper_plate(lines, padding=5):
     doc.append(upper_cutout(lines, depth=1.6))
     return doc
 
+
 def main(layout_json):
     with open(layout_json) as fh:
         layout = json.load(fh)
-
 
     data = layout[0]
     lines = layout[1:]
@@ -151,21 +159,22 @@ def main(layout_json):
 
     print(f"Size {size(lines)}")
 
-    doc = openpyscad.Translate([0, 0, 0])
+    doc = Translate([0, 0, 0])
     doc.append(key_plate_cutout(lines))
     doc.write("key_plate_cutout.scad")
 
-    doc = openpyscad.Translate([0, 0, 0])
+    doc = Translate([0, 0, 0])
     doc.append(key_plate(lines))
     doc.write("key_plate.scad")
 
-    doc = openpyscad.Translate([0, 0, 0])
+    doc = Translate([0, 0, 0])
     doc.append(upper_cutout(lines))
     doc.write("upper_cutout.scad")
 
-    doc = openpyscad.Translate([0, 0, 0])
+    doc = Translate([0, 0, 0])
     doc.append(upper_plate(lines))
     doc.write("upper_plate.scad")
+
 
 if __name__ == "__main__":
     layout_json = "layout.json" if len(sys.argv) < 2 else sys.argv[1]
